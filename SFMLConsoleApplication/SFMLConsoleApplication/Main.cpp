@@ -1,4 +1,16 @@
-#include "SFML/Graphics.hpp"
+#include "Game.h"
+
+int main() 
+{
+	Game *game = new Game;
+	game->Run();
+	delete game;
+	return 0;
+}
+
+
+#pragma region Legacy
+/*#include "SFML/Graphics.hpp"
 #include <string>
 
 using namespace sf;
@@ -23,4 +35,6 @@ int main(){
 		window.display();
 	}
 	return 0;
-}
+}*/
+#pragma endregion
+
