@@ -1,2 +1,3 @@
 ﻿  Game.cpp
-  SFMLConsoleApplication.vcxproj -> C:\Potatis INF\Skola\Högskola DVSUG\Progmetodik\Astroids\SFMLConsoleApplication\Debug\SFMLConsoleApplication.exe
+C:\Potatis INF\Unity Projects\ProgrameringsmetodikAsteroids\SFMLConsoleApplication\SFMLConsoleApplication\Game.cpp(140,35): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  SFMLConsoleApplication.vcxproj -> C:\Potatis INF\Unity Projects\ProgrameringsmetodikAsteroids\SFMLConsoleApplication\Debug\SFMLConsoleApplication.exe

@@ -1,11 +1,15 @@
+#pragma once
 #include "Player.h"
 #include "SFML/Graphics.hpp"
 
 using namespace sf;
 using namespace std;
 
-Player::Player(int iniX, int iniY, float iniRad, std::string colId, float speed, Texture* texture) : Entity(iniX, iniY, iniRad, colId) {
+Player::Player(int iniX, int iniY, int boundX, int boundY, float iniRad, std::string colId, float speed, Texture* texture) : Entity(iniX, iniY, iniRad, colId) 
+{
 	moveSpeed = speed;
+	boundryX = boundX;
+	boundryY = boundY;
 	ReadyGFX(texture);
 };
 
@@ -45,18 +49,31 @@ void Player::MovementManagement()
 		_yInput++;
 	}
 
-	//posX += _xInput * moveSpeed;
-	//posY += _yInput * moveSpeed;
+	//Output
+	posX += _xInput * moveSpeed;
+	posY += _yInput * moveSpeed;
 
-	mySprite->move(_xInput * moveSpeed, _yInput * moveSpeed);
+	//Boundries
+	if (posX > (boundryX - (radius / 2))) posX = (boundryX - (radius / 2));
+	if (posY > (boundryY - (radius / 2))) posY = (boundryY - (radius / 2));
+	if (posX < (0 + (radius / 2))) posX = 0 + (radius / 2);
+	if (posY < (0 + (radius / 2))) posY = 0 + (radius / 2);
+
+	//Execute
+	mySprite->setPosition(posX, posY);
 }
 
 void Player::ReadyGFX(sf::Texture *texture) 
 {
-	mySprite = new Sprite();
+	//Set up a sprite with the provided texture and center it's origin
 
+	mySprite = new Sprite();
 	mySprite->setTexture(*texture);
-	mySprite->setTextureRect(IntRect(9, 14, 64, 64));
+
+	float centerX = (mySprite->getLocalBounds().width / 2);
+	float centerY = (mySprite->getLocalBounds().height / 2);
+
+	mySprite->setOrigin(centerX, centerY);
 }
 
 void Player::UnloadGFX() 

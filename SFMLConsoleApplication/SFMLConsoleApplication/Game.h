@@ -1,6 +1,9 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include "Entity.h"
+#include <vector>
+
+typedef std::vector<Entity*> EntityVector;
 
 class Game
 {
@@ -10,11 +13,12 @@ public:
 	void Run();
 
 private:
+	bool CheckGameOverState();
 	void CollisionManagement();
-	void AsteroidManager();
-	void CoinManager();
-	void EntityMovement();
-	void EntityRemoval();
+	void AsteroidSpawner();
+	void EntityUpdate();
+	void EntityRender();
+	void EntityCleaner();
 	void WindowsEventManager();
 	sf::Texture* LoadTextureFromPath(std::string path);
 
@@ -24,4 +28,6 @@ private:
 
 	sf::RenderWindow gameWindow;
 	bool gameIsOver;
+
+	EntityVector entityList;
 };
