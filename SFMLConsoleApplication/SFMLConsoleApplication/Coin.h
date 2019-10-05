@@ -14,7 +14,6 @@ public:
 
 private:
 	float moveSpeed;
-	int floorY;
 	int dirY;
 	int boundryX;
 	int boundryY;

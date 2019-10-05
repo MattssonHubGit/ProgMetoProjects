@@ -15,7 +15,7 @@ public:
 private:
 	bool CheckGameOverState();
 	void CollisionManagement();
-	void AsteroidSpawner();
+	void AsteroidSpawner(float deltaTime);
 	void EntityUpdate();
 	void EntityRender();
 	void EntityCleaner();
@@ -28,6 +28,7 @@ private:
 
 	sf::RenderWindow gameWindow;
 	bool gameIsOver;
+	float asteroidTimer;
 
 	EntityVector entityList;
 };

@@ -4,6 +4,7 @@
 #include "string.h"
 #include "Coin.h"
 #include "Player.h"
+#include "Asteroid.h"
 #include <iostream>
 
 
@@ -13,23 +14,38 @@ using namespace std;
 
 //Settings
 namespace {
-	const string windowTitle = "Asteroids";
-	const VideoMode videoMode = VideoMode((768/2), (1024/2));
-	const Color backgroundColor = Color::Black;
+	//Video
+	const string WINDOW_TITLE = "Asteroids";
+	const VideoMode VIDEO_MODE = VideoMode((768/2), (1024/2));
+	const Color BACKGROUND_COLOR = Color::Black;
 	const int FRAMERATE_LIMIT = 60;
 
+	//Radius
 	const int PLAYER_RADIUS = 30;
 	const int COIN_RADIUS = 15;
+	const int ASTEROID_RADIUS = 30;
+
+	//Player
+	const float PLAYER_SPEED_BASE = 5;
+
+	//Coin
+	const float COIN_SPEED_BASE = 3;
+
+	//Asteroids
+	float asteroid_spawn_rate = 1;
+	const float ASTEROID_ACCELERATION_RATE = 0.1f;
+	const float ASTEROID_SPAWN_RATE_MAX = 5;
 }
 #pragma endregion
 
 Game::Game() :
-	gameWindow(videoMode, windowTitle, Style::Titlebar | Style::Close),
+	gameWindow(VIDEO_MODE, WINDOW_TITLE, Style::Titlebar | Style::Close),
 	playerTexture(LoadTextureFromPath("ShipSprite.psd")),
 	asteroidTexture(LoadTextureFromPath("AsteroidSprite.psd")),
 	coinTexture(LoadTextureFromPath("CoinSprite.psd")),
 	gameIsOver(false),
-	entityList()
+	entityList(),
+	asteroidTimer(0)
 {
 
 }
@@ -42,8 +58,8 @@ Game::~Game()
 
 void Game::Run() 
 {
-	Player* player = new Player(videoMode.width/2, videoMode.height/2, videoMode.width, videoMode.height, PLAYER_RADIUS, "Player", 5, playerTexture);
-	Coin* coin = new Coin(videoMode.width / 2, 0, videoMode.width, videoMode.height, COIN_RADIUS, "Coin", 2, coinTexture);
+	Player* player = new Player(VIDEO_MODE.width/2, VIDEO_MODE.height/2, VIDEO_MODE.width, VIDEO_MODE.height, PLAYER_RADIUS, "Player", PLAYER_SPEED_BASE, playerTexture);
+	Coin* coin = new Coin(VIDEO_MODE.width / 2, 0, VIDEO_MODE.width, VIDEO_MODE.height, COIN_RADIUS, "Coin", COIN_SPEED_BASE, coinTexture);
 
 	entityList.push_back(player);
 	entityList.push_back(coin);
@@ -63,7 +79,7 @@ void Game::Run()
 		}
 
 		//Things
-		gameWindow.clear(backgroundColor);
+		gameWindow.clear(BACKGROUND_COLOR);
 		EntityUpdate();
 		EntityRender();
 		CollisionManagement();
@@ -145,4 +161,40 @@ void Game::CollisionManagement()
 			}
 		}
 	}
+}
+
+void Game::AsteroidSpawner(float deltaTime)
+{
+	//Spawn as many asteroids/s as the spawn rate allows
+	if (asteroidTimer >= (1 / asteroid_spawn_rate)) 
+	{
+		asteroidTimer = 0;
+		Asteroid* _asteroid = SpawnAnAsteroid(asteroidTexture);
+		entityList.push_back(_asteroid);
+	}
+	else
+	{
+		asteroidTimer += deltaTime;
+	}
+
+	//Increase spawn rate
+	if (asteroid_spawn_rate >= ASTEROID_SPAWN_RATE_MAX) asteroid_spawn_rate += (ASTEROID_ACCELERATION_RATE * deltaTime);
+}
+
+Asteroid* SpawnAnAsteroid(sf::Texture* texture) 
+{
+	int _spawnPosX = 0;
+	int _spawnPosY = 0;
+
+	int _boundryX = VIDEO_MODE.width + ASTEROID_RADIUS;
+	int _boundryY = VIDEO_MODE.height + ASTEROID_RADIUS;
+
+	int _dirX = 0;
+	int _dirY = 0;
+
+	float _speed = 5;
+
+	Asteroid* _output = new Asteroid(_spawnPosX, _spawnPosY, _boundryX, _boundryY, ASTEROID_RADIUS, _dirX, _dirY, "Asteroid", _speed, texture);
+
+	return _output;
 }
