@@ -4,7 +4,7 @@
 class Asteroid : public Entity 
 {
 public:	
-	Asteroid(int iniX, int iniY, int iniBoundryX, int iniBoundryY, float iniRad, int iniDirX, int iniDirY, std::string colId, float speed, sf::Texture* texture);
+	Asteroid(int iniX, int iniY, int iniBoundryX, int iniBoundryY, float iniRad, std::string colId, float speed, sf::Texture* texture);
 	~Asteroid();
 
 	void OnCollision(std::string CollisionId) override;
@@ -14,7 +14,6 @@ public:
 private:
 	float moveSpeed;
 	int dirY;
-	int dirX;
 	int boundryX;
 	int boundryY;
 	void MovementManagement() override;

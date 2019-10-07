@@ -1,15 +1,19 @@
 #pragma once
 #include "Asteroid.h"
 
-Asteroid::Asteroid(int iniX, int iniY, int iniBoundryX, int iniBoundryY, float iniRad, int iniDirX, int iniDirY, std::string colId, float speed, sf::Texture* texture) : Entity(iniX, iniY, iniRad, colId)
+Asteroid::Asteroid(int iniX, int iniY, int iniBoundryX, int iniBoundryY, float iniRad, std::string colId, float speed, sf::Texture* texture) : Entity(iniX, iniY, iniRad, colId)
 {
 	moveSpeed = speed;
 	boundryX = iniBoundryX;
 	boundryY = iniBoundryY;
-	dirX = iniDirX;
-	dirY = iniDirY;
+	dirY = 1; //1 == down, -1 == up
 	ReadyGFX(texture);
 };
+
+Asteroid::~Asteroid() 
+{
+	UnloadGFX();
+}
 
 void Asteroid::ReadyGFX(sf::Texture* texture)
 {
@@ -31,12 +35,23 @@ void Asteroid::UnloadGFX()
 
 void Asteroid::MovementManagement() 
 {
+	//Move downwards
+	//If below bottom while taken == false, asteroid dies
 
+	int _dirY = dirY;
+
+	posY += _dirY * moveSpeed;
+	mySprite->setPosition(posX, posY);
+
+	if (posY > (boundryY + (radius / 2)))
+	{
+		markedDead = true;
+	}
 }
 
 void Asteroid::Update()
 {
-
+	MovementManagement();
 }
 
 void Asteroid::Render(sf::RenderWindow& renderWindow)

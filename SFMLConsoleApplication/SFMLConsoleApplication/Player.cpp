@@ -20,7 +20,10 @@ Player::~Player()
 
 void Player::OnCollision(std::string CollisionId) 
 {
-
+	if (CollisionId == "Asteroid") 
+	{
+		markedDead = true;
+	}
 }
 
 void Player::MovementManagement() 

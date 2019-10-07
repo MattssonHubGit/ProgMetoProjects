@@ -2,6 +2,8 @@
 #include "SFML/Graphics.hpp"
 #include "Entity.h"
 #include <vector>
+#include "Player.h"
+#include "Coin.h"
 
 typedef std::vector<Entity*> EntityVector;
 
@@ -13,7 +15,7 @@ public:
 	void Run();
 
 private:
-	bool CheckGameOverState();
+	bool CheckGameOverState(Player* plyr, Coin* cn);
 	void CollisionManagement();
 	void AsteroidSpawner(float deltaTime);
 	void EntityUpdate();

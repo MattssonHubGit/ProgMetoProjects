@@ -52,18 +52,28 @@ Game::Game() :
 
 Game::~Game()
 {
+	while (!entityList.empty()) 
+	{
+		delete entityList.back();
+		entityList.pop_back();
+	}
 }
 ;
 
 
 void Game::Run() 
 {
+	//Create essential entities
 	Player* player = new Player(VIDEO_MODE.width/2, VIDEO_MODE.height/2, VIDEO_MODE.width, VIDEO_MODE.height, PLAYER_RADIUS, "Player", PLAYER_SPEED_BASE, playerTexture);
 	Coin* coin = new Coin(VIDEO_MODE.width / 2, 0, VIDEO_MODE.width, VIDEO_MODE.height, COIN_RADIUS, "Coin", COIN_SPEED_BASE, coinTexture);
 
 	entityList.push_back(player);
 	entityList.push_back(coin);
 
+	//Ranomizer seed
+	srand(std::time(NULL));
+
+	//Frames
 	Clock frameClock;
 	while (gameWindow.isOpen() && !gameIsOver)
 	{
@@ -80,13 +90,14 @@ void Game::Run()
 
 		//Things
 		gameWindow.clear(BACKGROUND_COLOR);
+		AsteroidSpawner(deltaTime);
 		EntityUpdate();
 		EntityRender();
 		CollisionManagement();
 		EntityCleaner();
-		if (coin->markedDead)
+		if (CheckGameOverState(player, coin))
 		{
-			cout << "coin dead" << endl;
+			gameIsOver = true;
 		}
 		gameWindow.display();
 	}
@@ -144,7 +155,8 @@ void Game::WindowsEventManager()
 	}
 }
 
-void Game::CollisionManagement() 
+
+void Game::CollisionManagement()
 {
 	//Checks every entity against every other entity. 
 	//If their radius overlaps, call their OnCollision functions...
@@ -168,8 +180,21 @@ void Game::AsteroidSpawner(float deltaTime)
 	//Spawn as many asteroids/s as the spawn rate allows
 	if (asteroidTimer >= (1 / asteroid_spawn_rate)) 
 	{
+		//Reset timer
 		asteroidTimer = 0;
-		Asteroid* _asteroid = SpawnAnAsteroid(asteroidTexture);
+	
+		//Spawn a asteroid above window at random X
+		int _spawnPosX = rand() % (VIDEO_MODE.width - ASTEROID_RADIUS) + ASTEROID_RADIUS;
+		int _spawnPosY = 0 - ASTEROID_RADIUS;
+
+		int _boundryX = VIDEO_MODE.width + ASTEROID_RADIUS;
+		int _boundryY = VIDEO_MODE.height + ASTEROID_RADIUS;
+
+		float _speed = 5;
+
+		Asteroid* _asteroid = new Asteroid(_spawnPosX, _spawnPosY, _boundryX, _boundryY, ASTEROID_RADIUS, "Asteroid", _speed, asteroidTexture);
+
+
 		entityList.push_back(_asteroid);
 	}
 	else
@@ -178,23 +203,17 @@ void Game::AsteroidSpawner(float deltaTime)
 	}
 
 	//Increase spawn rate
-	if (asteroid_spawn_rate >= ASTEROID_SPAWN_RATE_MAX) asteroid_spawn_rate += (ASTEROID_ACCELERATION_RATE * deltaTime);
+	if (asteroid_spawn_rate <= ASTEROID_SPAWN_RATE_MAX) asteroid_spawn_rate += (ASTEROID_ACCELERATION_RATE * deltaTime);
 }
 
-Asteroid* SpawnAnAsteroid(sf::Texture* texture) 
+bool Game::CheckGameOverState(Player* plyr, Coin* cn) 
 {
-	int _spawnPosX = 0;
-	int _spawnPosY = 0;
+	bool _output = false;
 
-	int _boundryX = VIDEO_MODE.width + ASTEROID_RADIUS;
-	int _boundryY = VIDEO_MODE.height + ASTEROID_RADIUS;
-
-	int _dirX = 0;
-	int _dirY = 0;
-
-	float _speed = 5;
-
-	Asteroid* _output = new Asteroid(_spawnPosX, _spawnPosY, _boundryX, _boundryY, ASTEROID_RADIUS, _dirX, _dirY, "Asteroid", _speed, texture);
+	if (plyr->markedDead || cn->markedDead) 
+	{
+		_output = true;
+	}
 
 	return _output;
 }
