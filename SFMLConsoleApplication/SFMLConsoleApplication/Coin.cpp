@@ -67,7 +67,7 @@ void Coin::UnloadGFX()
 void Coin::Teleport() 
 {
 	posX = (rand() % (int)(boundryX - (radius / 2)));
-	posY = 0 - (radius / 2);
+	posY = (0 - (radius / 2) - boundryY);
 }
 
 void Coin::Update()
